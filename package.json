@@ -1,0 +1,21 @@
+{
+  "name": "CanvasToPoints",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/shadak/CanvasToPoints.git",
+  "author": "Jack Bennett <manticstatistic@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "canvas": "^2.6.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-latest": "^6.24.1",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2"
+  },
+  "scripts": {
+    "build": "babel --presets latest -d build/ src"
+  }
+}
