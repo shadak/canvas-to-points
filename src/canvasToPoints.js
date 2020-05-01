@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 const chunkRGBA = (data) => {
   const chunkedRGBA = [];
   let index = 0;
@@ -9,24 +11,44 @@ const chunkRGBA = (data) => {
   return chunkedRGBA;
 };
 
+const attachCoordinates = (chunkedData, canvasWidth) => (
+  chunkedData.map((RGBA, index) => {
+    const x = index % canvasWidth;
+    const y = Math.floor(index / canvasWidth);
+
+    return { x, y, RGBA };
+  })
+);
+
+const isEmptyPoint = ({ RGBA }) => !RGBA.every((_) => _ === 0);
 
 const extractPoints = (canvas) => {
   const ctx = canvas.getContext('2d');
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-  const chunkedData = chunkRGBA(imageData);
+  const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  return attachCoordinates(chunkRGBA(data), canvas.width);
+};
 
-  return null;
-}
+const adjustForWebGL = (point, width, height) => ({
+  x: point.x / width,
+  y: point.y / height,
+  RGBA: point.RGBA,
+});
 
-const filterDensity = (points, density) => {
-
-}
+const getJSON = (points) => JSON.stringify(points);
 
 const exportJSON = (points) => {
+  const data = getJSON(points);
+  fs.writeFile('points.json', data, 'utf8', (err) => console.log(err));
+};
 
-}
+const canvasToPoints = (canvas, webgl) => {
+  const { width, height } = canvas;
+  const points = extractPoints(canvas).filter(isEmptyPoint);
 
-const canvasToPoints = (canvas, density) => filterDensity(extractPoints(canvas), density);
+  return webgl
+    ? points.map((point) => adjustForWebGL(point, height, width))
+    : points;
+};
 
-
-export default canvasToPoints
+export { getJSON, exportJSON };
+export default canvasToPoints;
